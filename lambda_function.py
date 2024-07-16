@@ -6,8 +6,6 @@ print('Loading function')
 dynamodb = boto3.client('dynamodb')
 
 
-
-
 def respond(err, res=None):
     return {
         'statusCode': '400' if err else '200',
@@ -17,7 +15,9 @@ def respond(err, res=None):
         },
     }
 
-
-
+    
 def lambda_handler(event, context):
-    dynamodb.put_item(TableName="resume-db", Item={'visitorid':{'S':'LambdaTest'},'timestamp':{'S': datetime.now().isoformat(timespec='seconds')}})
+    headers = event['headers']
+    sourceip = headers['X-Forwarded-For']
+    dynamodb.put_item(TableName="resume-db", Item={'visitorid':{'S':sourceip},'timestamp':{'S': datetime.now().isoformat(timespec='seconds')}})
+
